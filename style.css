@@ -1,0 +1,177 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #050510;
+    color: #fff;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, #111122 0%, #000005 100%);
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#health-bar-container {
+    width: 300px;
+    height: 20px;
+    background-color: rgba(50, 0, 0, 0.5);
+    border: 2px solid #550000;
+    border-radius: 10px;
+    overflow: hidden;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    box-shadow: 0 0 10px rgba(255, 50, 50, 0.3);
+}
+
+#health-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff3333, #ffaaaa);
+    transition: width 0.2s ease-out;
+}
+
+#level-indicator {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #aaddff;
+    text-shadow: 0 0 10px rgba(170, 221, 255, 0.5);
+}
+
+#boss-health-container {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    text-align: center;
+    transition: opacity 1s ease-in-out;
+}
+
+#boss-name {
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #ff55ff;
+    margin-bottom: 5px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(255, 85, 255, 0.8);
+}
+
+#boss-health-bar {
+    width: 100%;
+    height: 25px;
+    background-color: rgba(50, 0, 50, 0.5);
+    border: 2px solid #aa00aa;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+}
+#boss-health-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--boss-hp, 100%);
+    background: linear-gradient(90deg, #aa00aa, #ff55ff);
+    transition: width 0.2s ease-out;
+}
+
+.hidden {
+    display: none !important;
+    opacity: 0;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 10, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+}
+
+.screen h1 {
+    font-size: 80px;
+    color: #fff;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    letter-spacing: 5px;
+}
+
+#game-over h1 {
+    color: #ff3333;
+    text-shadow: 0 0 30px rgba(255, 50, 50, 0.8);
+}
+
+.screen p {
+    font-size: 20px;
+    color: #ccc;
+    margin-bottom: 40px;
+}
+
+button {
+    padding: 15px 40px;
+    font-size: 24px;
+    background: transparent;
+    color: #aaddff;
+    border: 2px solid #aaddff;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(170, 221, 255, 0.2);
+}
+
+button:hover {
+    background-color: #aaddff;
+    color: #000;
+    box-shadow: 0 0 20px rgba(170, 221, 255, 0.6);
+    transform: scale(1.05);
+}

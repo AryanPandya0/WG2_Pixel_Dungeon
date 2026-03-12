@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abyssal Depths - 2D Dungeon Crawler</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="ui-layer">
+            <div id="health-bar-container">
+                <div id="health-bar"></div>
+            </div>
+            <div id="level-indicator">Level 1: The Catacombs</div>
+            <div id="boss-health-container" class="hidden">
+                <div id="boss-name">Boss Name</div>
+                <div id="boss-health-bar"></div>
+            </div>
+        </div>
+        <div id="main-menu" class="screen">
+            <h1>ABYSSAL DEPTHS</h1>
+            <p>Use WASD to Move, Arrows to shoot.</p>
+            <button id="start-btn">Enter the Dungeon</button>
+        </div>
+        <div id="game-over" class="screen hidden">
+            <h1>YOU DIED</h1>
+            <button id="restart-btn">Try Again</button>
+        </div>
+        <div id="victory-screen" class="screen hidden">
+            <h1>DUNGEON CLEARED</h1>
+            <p>You have conquered the Abyssal Depths.</p>
+            <button id="play-again-btn">Play Again</button>
+        </div>
+    </div>
+    
+    <script src="js/assets.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/level.js"></script>
+    <script src="js/entity.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/enemy.js"></script>
+    <script src="js/boss.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
