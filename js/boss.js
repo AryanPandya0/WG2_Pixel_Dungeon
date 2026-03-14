@@ -36,7 +36,7 @@ const BossManager = {
     updateUI() {
         if (!this.bossInstance) return;
         let p = Math.max(0, (this.bossInstance.hp / this.bossInstance.maxHp) * 100);
-        document.getElementById('boss-health-bar').style.setProperty('--boss-hp', p + '%');
+        document.getElementById('boss-health-bar').style.width = p + '%';
     }
 };
 

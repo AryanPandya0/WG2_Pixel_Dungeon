@@ -49,10 +49,13 @@ const Level = {
 
     init(levelIndex) {
         this.currentLevel = levelIndex;
-        document.getElementById('level-indicator').innerText = `Level ${this.currentLevel}: ` +
-            (this.currentLevel === 1 ? 'The Slime Pits' :
-                (this.currentLevel === 2 ? 'The Shadow Halls' : 'The Necropolis'));
-
+        const levelTitle = (this.currentLevel === 1 ? 'The Slime Pits' : 
+            (this.currentLevel === 2 ? 'The Shadow Halls' : 'The Necropolis'));
+            
+        document.getElementById('level-indicator').innerText = `Level ${this.currentLevel}: ${levelTitle}`;
+        
+        Engine.startLevelIntro(`Level ${this.currentLevel}: ${levelTitle}`);
+            
         this.generateMap();
     },
 
