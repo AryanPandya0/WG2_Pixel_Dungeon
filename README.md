@@ -1,6 +1,6 @@
 # 💀 ABYSSAL DEPTHS
 
-![Abyssal Depths Banner](https://img.shields.io/badge/Status-Complete-success?style=for-the-badge)
+![Abyssal Depths Banner](https://img.shields.io/badge/Status-In_Development-orange?style=for-the-badge)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow?style=for-the-badge&logo=javascript)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
