@@ -80,9 +80,14 @@ class Boss extends Entity {
                 if (edist < this.radius + e.radius) {
                     let overlap = (this.radius + e.radius) - edist;
                     let angle = Math.atan2(edy, edx);
+                    
                     // Boss pushes everything easily
-                    e.x -= Math.cos(angle) * overlap * 0.5;
-                    e.y -= Math.sin(angle) * overlap * 0.5;
+                    // Only move the other entity if it won't hit a wall
+                    let ex = e.x - Math.cos(angle) * overlap * 0.8;
+                    let ey = e.y - Math.sin(angle) * overlap * 0.8;
+                    
+                    if (!Level.checkCollision(ex, e.y, e.radius)) e.x = ex;
+                    if (!Level.checkCollision(e.x, ey, e.radius)) e.y = ey;
                 }
             }
         }
@@ -162,8 +167,13 @@ class Boss extends Entity {
                 }
             } else {
                 // Summon
-                Engine.entities.push(new Enemy(this.x + 50, this.y, 'Skeleton'));
-                Engine.entities.push(new Enemy(this.x - 50, this.y, 'Skeleton'));
+                for (let sx of [50, -50]) {
+                    let spawnX = this.x + sx;
+                    let spawnY = this.y;
+                    if (!Level.checkCollision(spawnX, spawnY, 16)) {
+                        Engine.entities.push(new Enemy(spawnX, spawnY, 'Skeleton'));
+                    }
+                }
             }
         }
     }

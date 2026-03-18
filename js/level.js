@@ -108,7 +108,7 @@ const Level = {
         let cx = Math.floor(this.width / 2);
         let cy = Math.floor(this.height / 2);
 
-        window.Player = new PlayerEntity(cx * this.tileSize, cy * this.tileSize);
+        window.Player = new PlayerEntity(cx * this.tileSize + this.tileSize / 2, cy * this.tileSize + this.tileSize / 2);
         Engine.entities = [];
         Engine.projectiles = [];
         Engine.particles = [];
@@ -174,9 +174,26 @@ const Level = {
         }
 
         if (typeof BossManager !== 'undefined') {
-            if (this.currentLevel === 1) BossManager.spawn(furthest.x * this.tileSize, furthest.y * this.tileSize, 'The Slime King');
-            else if (this.currentLevel === 2) BossManager.spawn(furthest.x * this.tileSize, furthest.y * this.tileSize, 'The Shadow Knight');
-            else BossManager.spawn(furthest.x * this.tileSize, furthest.y * this.tileSize, 'The Necromancer');
+            const bx = furthest.x;
+            const by = furthest.y;
+            
+            // Ensure 3x3 area is clear for the boss
+            for (let oy = -1; oy <= 1; oy++) {
+                for (let ox = -1; ox <= 1; ox++) {
+                    let tx = bx + ox;
+                    let ty = by + oy;
+                    if (tx >= 0 && tx < this.width && ty >= 0 && ty < this.height) {
+                        this.map[ty * this.width + tx] = 0;
+                    }
+                }
+            }
+
+            const spawnX = bx * this.tileSize + this.tileSize / 2;
+            const spawnY = by * this.tileSize + this.tileSize / 2;
+
+            if (this.currentLevel === 1) BossManager.spawn(spawnX, spawnY, 'The Slime King');
+            else if (this.currentLevel === 2) BossManager.spawn(spawnX, spawnY, 'The Shadow Knight');
+            else BossManager.spawn(spawnX, spawnY, 'The Necromancer');
         }
     }
 };

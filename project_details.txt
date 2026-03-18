@@ -1,0 +1,88 @@
+# PROJECT DOCUMENTATION: ABYSSAL DEPTHS
+
+## 1. Project Overview
+**Title:** Abyssal Depths
+**Description:** A 2D procedural dungeon crawler built with a custom HTML5 Canvas engine and Vanilla JavaScript.
+**Visual Style:** Neo-Retro Pixel Art with dynamic transparency and seamless tiling.
+**Architecture:** Object-Oriented Entity-Component System.
+
+---
+
+## 2. Technical Stack
+- **Language:** HTML5, CSS3, Vanilla JavaScript (ES6+).
+- **Engine:** Custom-built `requestAnimationFrame` game loop.
+- **Rendering:** 2D Canvas Context with `imageSmoothingEnabled = false` for crisp pixels.
+- **Assets:** AI-generated pixel art (32x32 characters, 64x64 tiles).
+
+---
+
+## 3. Core Modules & Logic
+### Foundational Scripts:
+- **`index.html`**: Entry point. Contains the canvas and the UI layer (Health bars, overlays).
+- **`style.css`**: Handles the 'Neon-Dark' aesthetic and layout of the UI screens.
+- **`js/engine.js`**: The heart of the game. Manages the loop, camera movements, screen shake, and rendering states.
+- **`js/assets.js`**: Asset manager. Preloads images and contains a custom **Background Removal Algorithm** that clears solid backgrounds from sprites at runtime.
+
+### Gameplay Logic:
+- **`js/level.js`**: Implements **Procedural Generation**. Uses a random-walker algorithm to dig unique rooms and corridors. Handles tile-based collision and seamless rendering logic (+1 overlap).
+- **`js/entity.js`**: The base class for all moving things. Handles velocity, friction, and HP.
+- **`js/player.js`**: Player-specific logic: WASD movement, mouse-aiming, and projectile spawning.
+- **`js/enemy.js`**: AI logic for basic enemies (Skeletons and Goblins). Features chase behavior and proximity-based attacks.
+- **`js/boss.js`**: Specialized logic for 3 unique bosses:
+  1. **The Slime King** (Wobble movement)
+  2. **The Shadow Knight** (Aggressive chasing)
+  3. **The Necromancer** (Teleportation and projectiles)
+- **`js/particles.js`**: Visual effects engine for hit impacts and trails.
+- **`js/input.js`**: Tracks keyboard states and mouse coordinates globally.
+- **`js/main.js`**: Orchestrates game initialization and screen transitions.
+
+---
+
+## 4. Key Mechanics
+- **Combat:** Directional aiming based on cursor position. Projectiles trigger screen shake and particle bursts on impact.
+- **Progression:** 3-level dungeon structure with increasing difficulty and unique boss encounters on each floor.
+- **Visual Perfection:** Tiles use a customized `drawImage` crop/overlap method to ensure no seams are visible on the dungeon floor. Sprites are processed to remove "checkerboard" AI artifacts.
+
+---
+
+## 5. File Structure
+/ (Root)
+├── assets/         # 9 Pixel art PNGs
+├── js/             # 10 JavaScript logic modules
+├── index.html      # Main HTML
+├── style.css       # Game styles
+├── README.md       # Project overview
+├── project_details.txt # This documentation
+└── .gitignore      # Git exclusion rules
+
+---
+
+## 6. Lore: The Chronicles of the Abyss
+Deep beneath the surface of the mortal realm lies the **Abyssal Depths**, a shifting, sentient labyrinth that grows every time a soul is lost within its walls. For centuries, ancient Guardians have protected the treasures of the past, now twisted into monstrous forms by the darkness.
+
+You play as a nameless Wanderer, armed with a relic of pure light. Your goal is to descend through the three forbidden layers of the catacombs, defeat the legendary Lords of the Abyss, and cleanse the Necropolis to finally find a way back to the surface.
+
+---
+
+## 7. Detailed Gameplay Mechanics
+
+### Combat & Abilities
+- **Light Projectiles:** Your primary weapon. Every shot emitted from your relic creates light in the darkness.
+- **Dynamic Knockback:** Enemies react physically to your attacks, allowing you to push them into corners or keep them at bay.
+- **HP Management:** A glowing pulse in the UI tracks your life force. Death is permanent within a run, forcing you to restart your descent.
+
+### The Bestiary (Enemies)
+- **The Skeleton Warrior:** Fast-moving bones that relentlessly chase the player. They are weak individually but dangerous in groups.
+- **The Goblin Ambusher:** Slower but unpredictable. They wait in the shadows of the procedurally generated rooms to strike.
+
+### The Lords of the Abyss (Boss Fights)
+1. **Level 1 Boss: The Slime King**
+   - *Mechanic:* A gelatinous mass that wobbles and grows as it moves. It uses brute force and large physical presence to corner the player.
+2. **Level 2 Boss: The Shadow Knight**
+   - *Mechanic:* A master of the blade. He moves with surprising speed for his size and aggressively hunts the player down.
+3. **Level 3 Final Boss: The Necromancer**
+   - *Mechanic:* The master of the Abyssal Depths. He can teleport across the arena and fire high-speed projectiles, requiring the player to stay constantly on the move.
+
+### Exploration
+- **Random-Walk Generation:** No two runs are the same. The dungeon breathes and changes, creating new paths every time you enter.
+- **The Golden Stairs:** Only appear once a Boss has been slain. They are the only way to descend deeper into the next, more difficult layer of the Abyss.

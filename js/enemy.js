@@ -44,8 +44,10 @@ class Enemy extends Entity {
                 if (dist < this.radius + e.radius) {
                     let overlap = (this.radius + e.radius) - dist;
                     let angle = Math.atan2(dy, dx);
-                    this.x += Math.cos(angle) * overlap * 0.1;
-                    this.y += Math.sin(angle) * overlap * 0.1;
+                    let tx = this.x + Math.cos(angle) * overlap * 0.1;
+                    let ty = this.y + Math.sin(angle) * overlap * 0.1;
+                    if (!Level.checkCollision(tx, this.y, this.radius)) this.x = tx;
+                    if (!Level.checkCollision(this.x, ty, this.radius)) this.y = ty;
                 }
             }
         }
