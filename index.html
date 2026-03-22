@@ -25,9 +25,24 @@
             </div>
         </div>
         <div id="main-menu" class="screen">
-            <h1>ABYSSAL DEPTHS</h1>
-            <p>Use WASD to Move, Click to shoot.</p>
-            <button id="start-btn">Enter the Dungeon</button>
+            <canvas id="menuParticles"></canvas>
+            <div class="menu-vignette"></div>
+            <div class="menu-content">
+                <div class="title-group">
+                    <p class="title-sub">⚔ A Dungeon Crawler ⚔</p>
+                    <h1 class="title-main">ABYSSAL<br><span>DEPTHS</span></h1>
+                    <p class="title-tagline">Descend. Survive. Conquer the Abyss.</p>
+                </div>
+                <div class="controls-hint">
+                    <div class="control-key"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>MOVE</span></div>
+                    <div class="control-key"><kbd>🖱</kbd><span>SHOOT</span></div>
+                </div>
+                <button id="start-btn">
+                    <span class="btn-text">Enter the Dungeon</span>
+                    <span class="btn-icon">▶</span>
+                </button>
+                <p class="menu-footer">v1.0 — Made with ☠ and Pixels</p>
+            </div>
         </div>
         <div id="game-over" class="screen hidden">
             <h1>YOU DIED</h1>

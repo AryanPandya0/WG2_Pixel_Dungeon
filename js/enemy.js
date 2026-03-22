@@ -7,19 +7,19 @@ class Enemy extends Entity {
         this.attackCooldown = 0;
         this.state = 'idle'; // idle, chase
     }
-    
+
     update(dt) {
         if (this.dead) return;
-        
+
         let distToPlayer = null;
         let pAngle = 0;
-        
+
         if (Player && !Player.dead) {
             let dx = Player.x - this.x;
             let dy = Player.y - this.y;
             distToPlayer = Math.hypot(dx, dy);
             pAngle = Math.atan2(dy, dx);
-            
+
             if (distToPlayer < 400) { // Aggro range
                 this.state = 'chase';
             } else {
@@ -28,13 +28,13 @@ class Enemy extends Entity {
         } else {
             this.state = 'idle';
         }
-        
+
         if (this.state === 'chase' && distToPlayer > this.radius + Player.radius) {
             // Move towards player
             this.vx += Math.cos(pAngle) * this.speed * dt * 20;
             this.vy += Math.sin(pAngle) * this.speed * dt * 20;
         }
-        
+
         // Enemy-Enemy collision simple separate
         for (let e of Engine.entities) {
             if (e !== this && e.faction === 'enemy' && !e.dead) {
@@ -51,17 +51,17 @@ class Enemy extends Entity {
                 }
             }
         }
-        
+
         super.update(dt);
-        
+
         // Attack
         if (this.attackCooldown > 0) this.attackCooldown -= dt;
-        
+
         if (this.state === 'chase' && distToPlayer < this.radius + Player.radius + 5 && this.attackCooldown <= 0) {
             this.attack();
         }
     }
-    
+
     attack() {
         this.attackCooldown = 1.0;
         if (Player && !Player.dead) {
@@ -69,7 +69,7 @@ class Enemy extends Entity {
             Engine.addShake(3);
         }
     }
-    
+
     die() {
         super.die();
         // Drop small healing orb maybe?
@@ -77,37 +77,37 @@ class Enemy extends Entity {
             // health drop un-implemented
         }
     }
-    
+
     draw(ctx) {
         if (this.dead) return;
-        
+
         ctx.save();
         ctx.translate(this.x, this.y);
-        
+
         // Flip based on velocity
         if (this.vx < 0) {
             ctx.scale(-1, 1);
         }
-        
+
         let img;
         if (this.type === 'Skeleton') {
             img = Assets.get('skeleton');
         } else {
             img = Assets.get('goblin');
         }
-        
+
         if (img) {
-            ctx.drawImage(img, -this.width/2, -this.height/2, this.width, this.height);
+            ctx.drawImage(img, -this.width / 2, -this.height / 2, this.width, this.height);
         }
-        
+
         // HP Bar
         ctx.scale(this.vx < 0 ? -1 : 1, 1); // unflip for relative UI drawn on top if flipped
-        
+
         ctx.fillStyle = 'black';
         ctx.fillRect(-15, -25, 30, 4);
         ctx.fillStyle = 'red';
         ctx.fillRect(-15, -25, 30 * (this.hp / this.maxHp), 4);
-        
+
         ctx.restore();
     }
 }
