@@ -81,16 +81,36 @@ class PlayerEntity extends Entity {
     }
     
     attack() {
-        this.attackCooldown = 0.25; // 4 attacks per sec
+        this.attackCooldown = 0.4; // Slightly slower attack for shotgun spread
         
         // Calculate attack angle based on mouse position relative to center of screen (which is player)
         let dx = Input.mouse.x - window.innerWidth / 2;
         let dy = Input.mouse.y - window.innerHeight / 2;
         let angle = Math.atan2(dy, dx);
         
-        // Spawn projectile
-        Engine.projectiles.push(new Projectile(this.x, this.y, angle, this.faction));
-        Engine.addShake(2);
+        // Spawn 3 projectiles in a spread
+        for (let i = -1; i <= 1; i++) {
+            let p = new Projectile(this.x, this.y, angle + i * 0.15, this.faction);
+            p.damage = 15; 
+            p.life = 0.6; // Shorter range
+            Engine.projectiles.push(p);
+        }
+        
+        // Apply recoil pushback tightly
+        this.vx -= Math.cos(angle) * 1000;
+        this.vy -= Math.sin(angle) * 1000;
+        
+        // Muzzle flash particles
+        for(let i=0; i<6; i++) {
+            let sparkAngle = angle + (Math.random() - 0.5) * 0.5;
+            let spark = new Particle(this.x + Math.cos(angle) * 15, this.y + Math.sin(angle) * 15, '#ffaa00');
+            spark.vx = Math.cos(sparkAngle) * (Math.random() * 400 + 200);
+            spark.vy = Math.sin(sparkAngle) * (Math.random() * 400 + 200);
+            spark.life = 0.2; // Quick flash
+            Engine.particles.push(spark);
+        }
+
+        Engine.addShake(8);
     }
     
     die() {
