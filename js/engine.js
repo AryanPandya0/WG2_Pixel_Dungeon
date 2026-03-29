@@ -58,6 +58,9 @@ const Engine = {
         this.levelIntro.timer = this.levelIntro.duration;
     },
 
+    timeScale: 1.0,
+    hitStopTimer: 0,
+
     loop(timestamp) {
         if (!this.lastTime) this.lastTime = timestamp;
         this.deltaTime = (timestamp - this.lastTime) / 1000;
@@ -65,7 +68,17 @@ const Engine = {
         if (this.deltaTime > 0.1) this.deltaTime = 0.1;
         this.lastTime = timestamp;
 
-        this.update(this.deltaTime);
+        if (this.hitStopTimer > 0) {
+            this.hitStopTimer -= this.deltaTime;
+        } else {
+            if (this.timeScale < 1.0) {
+                this.timeScale += this.deltaTime * 0.3; // Reverts to 1.0 over ~3 real seconds
+                if (this.timeScale > 1.0) this.timeScale = 1.0;
+            }
+            let dt = this.deltaTime * this.timeScale;
+            this.update(dt);
+        }
+        
         this.draw();
 
         requestAnimationFrame((t) => this.loop(t));

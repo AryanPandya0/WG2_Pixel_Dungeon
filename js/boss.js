@@ -30,6 +30,10 @@ const BossManager = {
             // Big explosion
             for(let i=0; i<50; i++) Particles.spawn(this.bossInstance.x, this.bossInstance.y, '#ffffff');
             Engine.addShake(20);
+            
+            // Dramatic Slow-Mo on boss death!
+            Engine.timeScale = 0.15;
+            Engine.hitStopTimer = 0.1; // Extra pause before slow-mo starts
         }
     },
     

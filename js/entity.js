@@ -20,6 +20,9 @@ class Entity {
         if (this.dead) return;
         this.hp -= amount;
         
+        // Minor Hit Stop for impact weight
+        Engine.hitStopTimer = 0.04;
+        
         // Spawn damage text
         Particles.spawnText(this.x, this.y - this.radius - 10, amount, this.faction === 'player' ? '#ff4444' : '#ffffff');
 
