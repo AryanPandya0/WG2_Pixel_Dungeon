@@ -5,8 +5,15 @@ class PlayerEntity extends Entity {
         this.speed = 250;
         this.attackCooldown = 0;
         this.active = true;
+        this.dashCooldown = 0;
+        this.dashTime = 0;
     }
     
+    takeDamage(amount, sourceX, sourceY) {
+        if (this.dashTime > 0) return; // Invincible while dashing
+        super.takeDamage(amount, sourceX, sourceY);
+    }
+
     update(dt) {
         if (!this.active || this.dead) return;
         
@@ -24,13 +31,34 @@ class PlayerEntity extends Entity {
             moveX /= mag;
             moveY /= mag;
         }
-        
-        this.vx += moveX * this.speed * dt * 30; // Accel
-        this.vy += moveY * this.speed * dt * 30;
-        
-        // Custom friction for player
-        this.vx *= 0.8;
-        this.vy *= 0.8;
+
+        // Dash logic
+        if (this.dashCooldown > 0) this.dashCooldown -= dt;
+        if (this.dashTime > 0) {
+            this.dashTime -= dt;
+            Particles.spawn(this.x, this.y, '#00ffff'); // Dash trail
+        }
+
+        if (Input.isDown('Space') && this.dashCooldown <= 0 && (moveX !== 0 || moveY !== 0)) {
+            this.dashCooldown = 1.0; // 1 second cooldown
+            this.dashTime = 0.2;     // 0.2 sec duration
+            this.vx = moveX * 1600;  // huge burst of speed
+            this.vy = moveY * 1600;
+            Engine.addShake(4);
+            for(let i=0; i<10; i++) Particles.spawn(this.x, this.y, '#ffffff');
+        }
+
+        if (this.dashTime <= 0) {
+            this.vx += moveX * this.speed * dt * 30; // Accel
+            this.vy += moveY * this.speed * dt * 30;
+            // Normal custom friction
+            this.vx *= 0.8;
+            this.vy *= 0.8;
+        } else {
+            // Less friction during dash
+            this.vx *= 0.92;
+            this.vy *= 0.92;
+        }
         
         // Base update for position changes & collision
         super.update(dt);
