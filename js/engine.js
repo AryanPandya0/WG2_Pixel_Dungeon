@@ -107,8 +107,24 @@ const Engine = {
             const centerX = this.width / (2 * this.zoom);
             const centerY = this.height / (2 * this.zoom);
 
-            this.camera.targetX = Player.x - centerX;
-            this.camera.targetY = Player.y - centerY;
+            // Dynamic camera lead based on mouse position
+            let mx = window.Input ? Input.mouse.x : this.width / 2;
+            let my = window.Input ? Input.mouse.y : this.height / 2;
+            
+            let mouseOffsetX = (mx - this.width / 2) / this.zoom;
+            let mouseOffsetY = (my - this.height / 2) / this.zoom;
+            
+            // Limit the camera's lead distance so it doesn't detach too far
+            const maxLead = 200;
+            let dist = Math.hypot(mouseOffsetX, mouseOffsetY);
+            if (dist > maxLead) {
+                mouseOffsetX = (mouseOffsetX / dist) * maxLead;
+                mouseOffsetY = (mouseOffsetY / dist) * maxLead;
+            }
+
+            // Lead camera by 45% of limited mouse offset
+            this.camera.targetX = (Player.x + mouseOffsetX * 0.45) - centerX;
+            this.camera.targetY = (Player.y + mouseOffsetY * 0.45) - centerY;
 
             this.camera.x += (this.camera.targetX - this.camera.x) * 0.1;
             this.camera.y += (this.camera.targetY - this.camera.y) * 0.1;
