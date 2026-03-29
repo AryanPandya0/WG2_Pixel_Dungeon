@@ -78,7 +78,7 @@ const Engine = {
             let dt = this.deltaTime * this.timeScale;
             this.update(dt);
         }
-        
+
         this.draw();
 
         requestAnimationFrame((t) => this.loop(t));
@@ -110,10 +110,10 @@ const Engine = {
             // Dynamic camera lead based on mouse position
             let mx = window.Input ? Input.mouse.x : this.width / 2;
             let my = window.Input ? Input.mouse.y : this.height / 2;
-            
+
             let mouseOffsetX = (mx - this.width / 2) / this.zoom;
             let mouseOffsetY = (my - this.height / 2) / this.zoom;
-            
+
             // Limit the camera's lead distance so it doesn't detach too far
             const maxLead = 200;
             let dist = Math.hypot(mouseOffsetX, mouseOffsetY);

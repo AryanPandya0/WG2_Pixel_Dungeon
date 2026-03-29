@@ -159,6 +159,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    const cutsceneOverlay = document.getElementById('cutscene-overlay');
+    const csLines = [
+        document.getElementById('cs-line-1'),
+        document.getElementById('cs-line-2'),
+        document.getElementById('cs-line-3'),
+        document.getElementById('cs-line-4')
+    ];
+    let cutsceneActive = false;
+    let cutsceneTimeouts = [];
+
+    function playCutscene(onComplete) {
+        cutsceneActive = true;
+        mainMenuUrl.classList.add('hidden');
+        cutsceneOverlay.classList.remove('hidden');
+        
+        csLines.forEach(line => line.classList.remove('visible'));
+        
+        let delay = 1000;
+        csLines.forEach((line) => {
+            cutsceneTimeouts.push(setTimeout(() => {
+                if (cutsceneActive) line.classList.add('visible');
+            }, delay));
+            delay += 2500;
+        });
+        
+        cutsceneTimeouts.push(setTimeout(() => {
+            finishCutscene(onComplete);
+        }, delay + 2000));
+    }
+
+    function finishCutscene(onComplete) {
+        if (!cutsceneActive) return;
+        cutsceneActive = false;
+        cutsceneTimeouts.forEach(clearTimeout);
+        
+        cutsceneOverlay.style.transition = 'opacity 1.5s ease-out';
+        cutsceneOverlay.style.opacity = '0';
+        
+        setTimeout(() => {
+            cutsceneOverlay.classList.add('hidden');
+            cutsceneOverlay.style.opacity = '1';
+            onComplete();
+        }, 1500);
+    }
+
+    cutsceneOverlay.addEventListener('click', () => {
+        if (cutsceneActive) {
+            finishCutscene(() => {
+                Engine.init();
+                startGame();
+            });
+        }
+    });
+
     function startGame() {
         stopMenuAnimation();
         mainMenuUrl.classList.add('hidden');
@@ -171,8 +225,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     startBtn.addEventListener('click', () => {
         if(startBtn.disabled) return;
-        Engine.init();
-        startGame();
+        stopMenuAnimation();
+        playCutscene(() => {
+            Engine.init();
+            startGame();
+        });
     });
     
     restartBtn.addEventListener('click', () => {

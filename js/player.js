@@ -8,7 +8,7 @@ class PlayerEntity extends Entity {
         this.dashCooldown = 0;
         this.dashTime = 0;
     }
-    
+
     takeDamage(amount, sourceX, sourceY) {
         if (this.dashTime > 0) return; // Invincible while dashing
         super.takeDamage(amount, sourceX, sourceY);
@@ -16,15 +16,15 @@ class PlayerEntity extends Entity {
 
     update(dt) {
         if (!this.active || this.dead) return;
-        
+
         let moveX = 0;
         let moveY = 0;
-        
+
         if (Input.isDown('KeyW') || Input.isDown('ArrowUp')) moveY -= 1;
         if (Input.isDown('KeyS') || Input.isDown('ArrowDown')) moveY += 1;
         if (Input.isDown('KeyA') || Input.isDown('ArrowLeft')) moveX -= 1;
         if (Input.isDown('KeyD') || Input.isDown('ArrowRight')) moveX += 1;
-        
+
         // Normalize movement
         if (moveX !== 0 && moveY !== 0) {
             let mag = Math.hypot(moveX, moveY);
@@ -45,7 +45,7 @@ class PlayerEntity extends Entity {
             this.vx = moveX * 1600;  // huge burst of speed
             this.vy = moveY * 1600;
             Engine.addShake(4);
-            for(let i=0; i<10; i++) Particles.spawn(this.x, this.y, '#ffffff');
+            for (let i = 0; i < 10; i++) Particles.spawn(this.x, this.y, '#ffffff');
         }
 
         if (this.dashTime <= 0) {
@@ -59,19 +59,19 @@ class PlayerEntity extends Entity {
             this.vx *= 0.92;
             this.vy *= 0.92;
         }
-        
+
         // Base update for position changes & collision
         super.update(dt);
-        
+
         // Attack logic
         if (this.attackCooldown > 0) {
             this.attackCooldown -= dt;
         }
-        
+
         if (Input.mouse.down && this.attackCooldown <= 0) {
             this.attack();
         }
-        
+
         // Update UI
         let hb = document.getElementById('health-bar');
         if (hb) {
@@ -79,29 +79,29 @@ class PlayerEntity extends Entity {
             hb.style.width = pct + '%';
         }
     }
-    
+
     attack() {
         this.attackCooldown = 0.4; // Slightly slower attack for shotgun spread
-        
+
         // Calculate attack angle based on mouse position relative to center of screen (which is player)
         let dx = Input.mouse.x - window.innerWidth / 2;
         let dy = Input.mouse.y - window.innerHeight / 2;
         let angle = Math.atan2(dy, dx);
-        
+
         // Spawn 3 projectiles in a spread
         for (let i = -1; i <= 1; i++) {
             let p = new Projectile(this.x, this.y, angle + i * 0.15, this.faction);
-            p.damage = 15; 
+            p.damage = 15;
             p.life = 0.6; // Shorter range
             Engine.projectiles.push(p);
         }
-        
+
         // Apply recoil pushback tightly
         this.vx -= Math.cos(angle) * 1000;
         this.vy -= Math.sin(angle) * 1000;
-        
+
         // Muzzle flash particles
-        for(let i=0; i<6; i++) {
+        for (let i = 0; i < 6; i++) {
             let sparkAngle = angle + (Math.random() - 0.5) * 0.5;
             let spark = new Particle(this.x + Math.cos(angle) * 15, this.y + Math.sin(angle) * 15, '#ffaa00');
             spark.vx = Math.cos(sparkAngle) * (Math.random() * 400 + 200);
@@ -112,30 +112,30 @@ class PlayerEntity extends Entity {
 
         Engine.addShake(8);
     }
-    
+
     die() {
         super.die();
         this.active = false;
         Engine.state = 'GAMEOVER';
         document.getElementById('game-over').classList.remove('hidden');
     }
-    
+
     draw(ctx) {
         if (this.dead) return;
         ctx.save();
-        
+
         let dx = Input.mouse.x - window.innerWidth / 2;
-        
+
         ctx.translate(this.x, this.y);
         if (dx < 0) {
             ctx.scale(-1, 1);
         }
-        
+
         let img = Assets.get('player');
         if (img) {
-            ctx.drawImage(img, -this.width/2, -this.height/2, this.width, this.height);
+            ctx.drawImage(img, -this.width / 2, -this.height / 2, this.width, this.height);
         }
-        
+
         ctx.restore();
     }
 }
@@ -152,23 +152,23 @@ class Projectile {
         this.dead = false;
         this.life = 2.0;
     }
-    
+
     update(dt) {
         this.x += this.vx * dt;
         this.y += this.vy * dt;
         this.life -= dt;
-        
+
         if (this.life <= 0 || Level.checkCollision(this.x, this.y, this.radius)) {
             this.dead = true;
-            for(let i=0; i<3; i++) Particles.spawn(this.x, this.y, '#00ffff');
+            for (let i = 0; i < 3; i++) Particles.spawn(this.x, this.y, '#00ffff');
             return;
         }
-        
+
         // Trail particle
         if (Math.random() < 0.5) {
             Particles.spawn(this.x, this.y, '#00aaaa');
         }
-        
+
         // Entity collision
         for (let e of Engine.entities) {
             if (e.faction !== this.faction && !e.dead) {
@@ -176,12 +176,12 @@ class Projectile {
                 if (dist < this.radius + e.radius) {
                     e.takeDamage(this.damage, this.x, this.y);
                     this.dead = true;
-                    for(let i=0; i<5; i++) Particles.spawn(this.x, this.y, '#00ffff');
+                    for (let i = 0; i < 5; i++) Particles.spawn(this.x, this.y, '#00ffff');
                     break;
                 }
             }
         }
-        
+
         // Player collision
         if (this.faction !== 'player' && Player && !Player.dead) {
             let dist = Math.hypot(this.x - Player.x, this.y - Player.y);
@@ -192,7 +192,7 @@ class Projectile {
             }
         }
     }
-    
+
     draw(ctx) {
         ctx.save();
         ctx.fillStyle = this.faction === 'player' ? '#00ffff' : '#ff00ff';

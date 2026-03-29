@@ -397,3 +397,52 @@ button:hover {
     to   { opacity: 1; }
 }
 
+/* ============================================
+   CUTSCENE OVERLAY
+   ============================================ */
+#cutscene-overlay {
+    background: #000;
+    z-index: 200;
+    cursor: pointer;
+}
+
+.cutscene-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    height: 100%;
+    width: 80%;
+}
+
+.cs-text {
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 2s ease-out;
+    letter-spacing: 2px;
+    line-height: 1.5;
+}
+
+.cs-text.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cs-skip {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    font-size: 10px;
+    color: #555;
+    animation: pulseSkip 2s infinite;
+}
+
+@keyframes pulseSkip {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
