@@ -19,6 +19,9 @@ class Entity {
     takeDamage(amount, sourceX, sourceY) {
         if (this.dead) return;
         this.hp -= amount;
+        
+        // Spawn damage text
+        Particles.spawnText(this.x, this.y - this.radius - 10, amount, this.faction === 'player' ? '#ff4444' : '#ffffff');
 
         // Simple knockback
         if (sourceX !== undefined && sourceY !== undefined) {
