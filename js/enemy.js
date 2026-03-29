@@ -72,9 +72,10 @@ class Enemy extends Entity {
 
     die() {
         super.die();
-        // Drop small healing orb maybe?
-        if (Math.random() < 0.2) {
-            // health drop un-implemented
+        // Drop small healing orb (20% for Skeleton, 40% for others)
+        let dropChance = this.type === 'Skeleton' ? 0.2 : 0.4;
+        if (Math.random() < dropChance) {
+            Engine.entities.push(new HealOrb(this.x, this.y));
         }
     }
 
