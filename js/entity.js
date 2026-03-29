@@ -26,6 +26,13 @@ class Entity {
         // Spawn damage text
         Particles.spawnText(this.x, this.y - this.radius - 10, amount, this.faction === 'player' ? '#ff4444' : '#ffffff');
 
+        // Floor splatter
+        let bloodColor = this.faction === 'player' ? '#ff0000' : '#8a0a0a';
+        if (this.name === 'The Slime King') bloodColor = '#00ff00';
+        if (typeof Level.addSplatter === 'function') {
+            Level.addSplatter(this.x, this.y, bloodColor);
+        }
+
         // Simple knockback
         if (sourceX !== undefined && sourceY !== undefined) {
             let dx = this.x - sourceX;

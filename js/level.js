@@ -45,6 +45,7 @@ const Level = {
     width: 50,
     height: 50,
     map: [],
+    splatters: [],
     currentLevel: 1,
 
     init(levelIndex) {
@@ -100,7 +101,33 @@ const Level = {
                 }
             }
         }
+        
+        // Draw floor splatters
+        for (let s of this.splatters) {
+            ctx.fillStyle = s.color;
+            ctx.globalAlpha = 0.6;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1.0;
+
         if (Stairs.active) Stairs.draw(ctx);
+    },
+
+    addSplatter(x, y, color = '#aa0000') {
+        let count = Math.floor(Math.random() * 3) + 2;
+        for (let i = 0; i < count; i++) {
+            this.splatters.push({
+                x: x + (Math.random() * 30 - 15),
+                y: y + (Math.random() * 30 - 15),
+                radius: Math.random() * 4 + 2,
+                color: color
+            });
+        }
+        if (this.splatters.length > 500) {
+            this.splatters.splice(0, this.splatters.length - 500);
+        }
     },
 
     generateMap() {
@@ -112,6 +139,7 @@ const Level = {
         Engine.entities = [];
         Engine.projectiles = [];
         Engine.particles = [];
+        this.splatters = [];
         Stairs.active = false;
 
         if (typeof BossManager !== 'undefined') {
