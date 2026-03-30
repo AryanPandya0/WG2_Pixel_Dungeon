@@ -166,6 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('cs-line-3'),
         document.getElementById('cs-line-4')
     ];
+    const csBgs = [
+        document.getElementById('cs-bg-1'),
+        document.getElementById('cs-bg-2'),
+        document.getElementById('cs-bg-3'),
+        document.getElementById('cs-bg-4')
+    ];
     let cutsceneActive = false;
     let cutsceneTimeouts = [];
 
@@ -175,11 +181,19 @@ document.addEventListener('DOMContentLoaded', () => {
         cutsceneOverlay.classList.remove('hidden');
         
         csLines.forEach(line => line.classList.remove('visible'));
+        csBgs.forEach(bg => bg.classList.remove('visible'));
         
         let delay = 1000;
-        csLines.forEach((line) => {
+        csLines.forEach((line, index) => {
             cutsceneTimeouts.push(setTimeout(() => {
-                if (cutsceneActive) line.classList.add('visible');
+                if (cutsceneActive) {
+                    // Start fading out previous backgrounds
+                    csBgs.forEach((bg, i) => { if (i !== index) bg.classList.remove('visible'); });
+                    // Fade in new background
+                    csBgs[index].classList.add('visible');
+                    // Fade in text
+                    line.classList.add('visible');
+                }
             }, delay));
             delay += 2500;
         });
