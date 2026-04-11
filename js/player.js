@@ -110,7 +110,7 @@ class PlayerEntity extends Entity {
             Engine.particles.push(spark);
         }
 
-        Engine.addShake(8);
+        Engine.addShake(3);
     }
 
     die() {
