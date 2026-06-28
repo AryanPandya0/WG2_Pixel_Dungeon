@@ -7,6 +7,9 @@ class PlayerEntity extends Entity {
         this.active = true;
         this.dashCooldown = 0;
         this.dashTime = 0;
+
+        // Start with Relic Shotgun
+        this.weapon = { ...WEAPON_DEFS['Relic Shotgun'] };
     }
 
     takeDamage(amount, sourceX, sourceY) {
@@ -81,36 +84,52 @@ class PlayerEntity extends Entity {
     }
 
     attack() {
-        this.attackCooldown = 0.4; // Slightly slower attack for shotgun spread
+        const w = this.weapon;
+        this.attackCooldown = w.fireRate;
 
         // Calculate attack angle based on mouse position relative to center of screen (which is player)
         let dx = Input.mouse.x - window.innerWidth / 2;
         let dy = Input.mouse.y - window.innerHeight / 2;
         let angle = Math.atan2(dy, dx);
 
-        // Spawn 3 projectiles in a spread
-        for (let i = -1; i <= 1; i++) {
-            let p = new Projectile(this.x, this.y, angle + i * 0.15, this.faction);
-            p.damage = 15;
-            p.life = 0.6; // Shorter range
+        // Spawn projectiles based on weapon definition
+        const count = w.projectileCount;
+        const halfSpread = (count - 1) * w.spread / 2;
+
+        for (let i = 0; i < count; i++) {
+            let spreadOffset;
+            if (count === 1) {
+                // Single projectile: random spread for flamethrower, none for others
+                spreadOffset = w.special === 'flame' ? (Math.random() - 0.5) * w.spread * 2 : 0;
+            } else {
+                spreadOffset = -halfSpread + i * w.spread;
+            }
+            
+            let projAngle = angle + spreadOffset;
+            let p = new Projectile(this.x, this.y, projAngle, this.faction, w);
             Engine.projectiles.push(p);
         }
 
-        // Apply recoil pushback tightly
-        this.vx -= Math.cos(angle) * 1000;
-        this.vy -= Math.sin(angle) * 1000;
+        // Apply recoil pushback
+        this.vx -= Math.cos(angle) * w.recoil;
+        this.vy -= Math.sin(angle) * w.recoil;
 
-        // Muzzle flash particles
-        for (let i = 0; i < 6; i++) {
+        // Muzzle flash particles (color matches weapon)
+        const flashCount = w.special === 'flame' ? 2 : 6;
+        for (let i = 0; i < flashCount; i++) {
             let sparkAngle = angle + (Math.random() - 0.5) * 0.5;
-            let spark = new Particle(this.x + Math.cos(angle) * 15, this.y + Math.sin(angle) * 15, '#ffaa00');
+            let spark = new Particle(this.x + Math.cos(angle) * 15, this.y + Math.sin(angle) * 15, w.color);
             spark.vx = Math.cos(sparkAngle) * (Math.random() * 400 + 200);
             spark.vy = Math.sin(sparkAngle) * (Math.random() * 400 + 200);
             spark.life = 0.2; // Quick flash
             Engine.particles.push(spark);
         }
 
-        Engine.addShake(3);
+        // Screen shake scales with weapon heaviness
+        const shakeAmount = w.type === 'heavy' ? 8 : (w.type === 'spread' ? 3 : 2);
+        if (w.special !== 'flame') {
+            Engine.addShake(shakeAmount);
+        }
     }
 
     die() {
@@ -136,71 +155,6 @@ class PlayerEntity extends Entity {
             ctx.drawImage(img, -this.width / 2, -this.height / 2, this.width, this.height);
         }
 
-        ctx.restore();
-    }
-}
-
-class Projectile {
-    constructor(x, y, angle, faction) {
-        this.x = x;
-        this.y = y;
-        this.vx = Math.cos(angle) * 600;
-        this.vy = Math.sin(angle) * 600;
-        this.faction = faction;
-        this.radius = 5;
-        this.damage = 25;
-        this.dead = false;
-        this.life = 2.0;
-    }
-
-    update(dt) {
-        this.x += this.vx * dt;
-        this.y += this.vy * dt;
-        this.life -= dt;
-
-        if (this.life <= 0 || Level.checkCollision(this.x, this.y, this.radius)) {
-            this.dead = true;
-            for (let i = 0; i < 3; i++) Particles.spawn(this.x, this.y, '#00ffff');
-            return;
-        }
-
-        // Trail particle
-        if (Math.random() < 0.5) {
-            Particles.spawn(this.x, this.y, '#00aaaa');
-        }
-
-        // Entity collision
-        for (let e of Engine.entities) {
-            if (e.faction !== this.faction && !e.dead) {
-                let dist = Math.hypot(this.x - e.x, this.y - e.y);
-                if (dist < this.radius + e.radius) {
-                    e.takeDamage(this.damage, this.x, this.y);
-                    this.dead = true;
-                    for (let i = 0; i < 5; i++) Particles.spawn(this.x, this.y, '#00ffff');
-                    break;
-                }
-            }
-        }
-
-        // Player collision
-        if (this.faction !== 'player' && Player && !Player.dead) {
-            let dist = Math.hypot(this.x - Player.x, this.y - Player.y);
-            if (dist < this.radius + Player.radius) {
-                Player.takeDamage(this.damage, this.x, this.y);
-                this.dead = true;
-                Engine.addShake(5);
-            }
-        }
-    }
-
-    draw(ctx) {
-        ctx.save();
-        ctx.fillStyle = this.faction === 'player' ? '#00ffff' : '#ff00ff';
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = ctx.fillStyle;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
         ctx.restore();
     }
 }

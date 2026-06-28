@@ -139,6 +139,7 @@ const Level = {
         Engine.entities = [];
         Engine.projectiles = [];
         Engine.particles = [];
+        Engine.weaponPickups = [];
         this.splatters = [];
         Stairs.active = false;
 
@@ -187,15 +188,24 @@ const Level = {
             }
         }
 
+        // Spawn enemies using weighted spawn tables
         for (let y = 5; y < this.height - 5; y++) {
             for (let x = 5; x < this.width - 5; x++) {
                 if (this.map[y * this.width + x] === 0 && Math.random() < 0.03) {
                     if (Math.hypot(x - cx, y - cy) > 5) {
-                        Engine.entities.push(new Enemy(
+                        let enemyType = SpawnTable.getEnemyType(this.currentLevel);
+                        let enemy = new Enemy(
                             x * this.tileSize + this.tileSize / 2,
                             y * this.tileSize + this.tileSize / 2,
-                            Math.random() < 0.5 ? 'Skeleton' : 'Goblin'
-                        ));
+                            enemyType
+                        );
+
+                        // Elite chance
+                        if (SpawnTable.shouldBeElite(this.currentLevel)) {
+                            enemy.makeElite();
+                        }
+
+                        Engine.entities.push(enemy);
                     }
                 }
             }

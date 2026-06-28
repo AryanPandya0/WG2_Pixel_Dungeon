@@ -34,6 +34,10 @@ const BossManager = {
             // Dramatic Slow-Mo on boss death!
             Engine.timeScale = 0.15;
             Engine.hitStopTimer = 0.1; // Extra pause before slow-mo starts
+
+            // Boss always drops a weapon
+            let def = getRandomWeaponDef(Player ? Player.weapon.name : '');
+            Engine.weaponPickups.push(new WeaponPickup(this.bossInstance.x, this.bossInstance.y, def));
         }
     },
     

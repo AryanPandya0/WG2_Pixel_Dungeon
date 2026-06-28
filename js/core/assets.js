@@ -3,17 +3,30 @@ const Assets = {
     totalAssets: 0,
     loadedAssets: 0,
 
-    // Mapping keys to image paths
+    // Mapping keys to image paths — organized by subfolder
     toLoad: {
+        // Environment
         'floor': 'assets/floor.png',
         'wall': 'assets/wall.png',
         'stairs': 'assets/stairs.png',
-        'player': 'assets/player.png',
-        'skeleton': 'assets/skeleton.png',
-        'goblin': 'assets/goblin.png',
-        'The Slime King': 'assets/slime_boss.png',
-        'The Shadow Knight': 'assets/knight_boss.png',
-        'The Necromancer': 'assets/necro_boss.png'
+
+        // Player
+        'player': 'assets/sprites/player.png',
+
+        // Enemies
+        'skeleton': 'assets/enemies/skeleton.png',
+        'goblin': 'assets/enemies/goblin.png',
+        'wraith': 'assets/enemies/wraith.png',
+        'bomber_imp': 'assets/enemies/bomber_imp.png',
+        'shield_bearer': 'assets/enemies/shield_bearer.png',
+        'shadow_assassin': 'assets/enemies/shadow_assassin.png',
+        'corrupted_totem': 'assets/enemies/corrupted_totem.png',
+        'mimic': 'assets/enemies/mimic.png',
+
+        // Bosses
+        'The Slime King': 'assets/bosses/slime_boss.png',
+        'The Shadow Knight': 'assets/bosses/knight_boss.png',
+        'The Necromancer': 'assets/bosses/necro_boss.png'
     },
 
     loadAll(callback) {

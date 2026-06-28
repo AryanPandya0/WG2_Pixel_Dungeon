@@ -11,6 +11,7 @@ const Engine = {
     entities: [],
     particles: [],
     projectiles: [],
+    weaponPickups: [],
 
     // Camera
     camera: {
@@ -148,6 +149,15 @@ const Engine = {
             }
         }
 
+        // Weapon pickups
+        for (let i = this.weaponPickups.length - 1; i >= 0; i--) {
+            let wp = this.weaponPickups[i];
+            wp.update(dt);
+            if (wp.dead) {
+                this.weaponPickups.splice(i, 1);
+            }
+        }
+
         // Projectiles
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
             let p = this.projectiles[i];
@@ -189,7 +199,12 @@ const Engine = {
         // Draw Level Floors & Walls
         Level.draw(this.ctx);
 
-        // Draw all game objects sorted by Y depth for a bit of isometric feel (optional, mostly top down)
+        // Draw weapon pickups (on ground, under entities)
+        for (let wp of this.weaponPickups) {
+            wp.draw(this.ctx);
+        }
+
+        // Draw all game objects sorted by Y depth for a bit of isometric feel
         let renderables = [].concat(this.entities, this.projectiles, window.Player && Player.active ? [Player] : []);
         renderables.sort((a, b) => a.y - b.y);
 
@@ -224,6 +239,9 @@ const Engine = {
         if (this.levelIntro.opacity > 0) {
             this.drawLevelIntro();
         }
+
+        // Draw weapon HUD (screen-space, after restore)
+        this.drawWeaponHUD();
     },
 
     drawLevelIntro() {
@@ -245,5 +263,66 @@ const Engine = {
         this.ctx.setLineDash([8, 8]); // Pixelated dash
         this.ctx.strokeRect(0, this.height / 2 - 50, this.width, 100);
         this.ctx.restore();
+    },
+
+    drawWeaponHUD() {
+        if (!window.Player || !Player.active || !Player.weapon) return;
+        const ctx = this.ctx;
+        const w = Player.weapon;
+        
+        ctx.save();
+        
+        // Weapon name and info - top left under health bar
+        const hudX = 20;
+        const hudY = 55;
+        
+        // Background panel
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(hudX, hudY, 220, 40);
+        ctx.strokeStyle = w.color || '#00ffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(hudX, hudY, 220, 40);
+        
+        // Weapon icon (small colored dot)
+        ctx.fillStyle = w.color || '#00ffff';
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = w.color || '#00ffff';
+        ctx.beginPath();
+        ctx.arc(hudX + 18, hudY + 20, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Weapon name
+        ctx.font = '10px "Press Start 2P"';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(w.name, hudX + 32, hudY + 14);
+        
+        // Weapon type
+        ctx.font = '7px "Press Start 2P"';
+        ctx.fillStyle = w.color || '#888888';
+        ctx.fillText(w.type.toUpperCase(), hudX + 32, hudY + 30);
+        
+        // Swap hint (if near a pickup)
+        let nearPickup = false;
+        for (let wp of this.weaponPickups) {
+            if (!wp.dead) {
+                let dist = Math.hypot(wp.x - Player.x, wp.y - Player.y);
+                if (dist < 60) {
+                    nearPickup = true;
+                    break;
+                }
+            }
+        }
+        
+        if (nearPickup) {
+            ctx.font = '9px "Press Start 2P"';
+            ctx.fillStyle = '#ffff00';
+            ctx.textAlign = 'center';
+            ctx.fillText('[E] SWAP WEAPON', this.width / 2, this.height - 60);
+        }
+        
+        ctx.restore();
     }
 };
